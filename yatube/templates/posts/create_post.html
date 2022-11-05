@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+{% block title %}
+  {% if post %}
+    Редактировать запись
+  {% else %}
+    Добавить запись
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-md-8 p-5">
+        <div class="card">
+          {% if post %}Редактировать запись{% else %}Добавить запись{% endif %}
+          <div class="card-body">
+            {% thumbnail post.image "960x339" crop="center" upscale=True as im %}
+              <img class="card-img my-2" src="{{ im.url }}">
+            {% endthumbnail %}
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              {% for element in form %}
+                <div class="form-group row my-3 p-3">
+                  <label for="id_text">
+                    {{ element.help_text}}
+                    <span class="required text-danger" >*</span>
+                  </label>
+                  {{ element }}
+                  <small id="id_text-help" class="form-text text-muted">
+                  {{ element.verbose_name}}
+                  {% if form.subject.errors %}
+                    <ol>
+                      {% for error in form.subject.errors %}
+                        <li><strong>{{ error|escape }}</strong></li>
+                      {% endfor %}
+                    </ol>
+                  {% endif %}
+                </small>
+              </div>
+              {% endfor %}
+              <button type="submit" class="btn btn-primary btn-block">{% if post %}Сохранить{% else %}Добавить запись{% endif %}</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
